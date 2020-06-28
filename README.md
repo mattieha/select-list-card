@@ -1,7 +1,5 @@
 # Select list Card by [@mattieha](https://github.com/mattieha)
 
-[![GitHub Release][releases-shield]][releases]
-[![License][license-shield]](LICENSE.md)
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg?style=for-the-badge)](https://github.com/custom-components/hacs)
 
 Display an input_select entity as a list
@@ -12,13 +10,13 @@ Display an input_select entity as a list
 
 Select List Card supports Lovelace's Visual Editor. Click the + button to add a card and search for select list.
 
-![Visual Editor](assets/visual_editor.png)
+![Visual Editor](https://raw.githubusercontent.com/mattieha/select-list-card/master/assets/visual_editor.png)
 
 ## Examples
 
 ### Default config
 
-![card](assets/card.png)
+![card](https://raw.githubusercontent.com/mattieha/select-list-card/master/assets/card.png)
 
 ```yaml
 type: 'custom:select-list-card'
@@ -30,8 +28,8 @@ entity: input_select.scenes
 | Name              | Type    | Requirement  | Description                                 | Default             |
 | ----------------- | ------- | ------------ | ------------------------------------------- | ------------------- |
 | type              | string  | **Required** | `custom:select-list-card`                   |
+| entity            | string  | **Required** | Home Assistant input_select ID.             | `none`              |
 | name              | string  | **Optional** | Card name                                   | ``                  |
-| entity            | string  | **Optional** | Home Assistant input_select ID.             | `none`              |
 | truncate          | boolean | **Optional** | Truncate option text                        | `true`              |
 | scrollInToView    | boolean | **Optional** | Scroll active item in to view               | `true`              |
 | maxHeight         | string  | **Optional** | Max height of the list                      | `350`               |
