@@ -1,0 +1,6 @@
+{
+    "name": "Select list Card",
+    "render_readme": true,
+    "domains": ["input_select"],
+    "filename": "select-list-card.js"
+}
