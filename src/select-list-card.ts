@@ -42,8 +42,8 @@ export class SelectListCard extends LitElement {
       entity: entity || '',
       name: '',
       truncate: true,
-      scroll_to_selected: false,
-      max_options: 3,
+      scroll_to_selected: true,
+      max_options: 5,
     };
   }
 
@@ -170,6 +170,10 @@ export class SelectListCard extends LitElement {
         border-radius: 4px;
         background: var(--scrollbar-thumb-color);
       }
+      paper-item {
+        cursor: pointer;
+      }
+      paper-item:hover::before,
       .iron-selected:before {
         position: var(--layout-fit_-_position);
         top: var(--layout-fit_-_top);

@@ -12,7 +12,7 @@
   "editor": {
     "entity": "Entity (required)",
     "title": "Card title (optional)",
-    "max_options": "NUmber of options shown (0 = all)",
+    "max_options": "Number of options shown (0 = all)",
     "truncate": "Truncate long option name",
     "scroll_to_selected": "Selected option always in view"
   }
