@@ -249,7 +249,7 @@ found at http://polymer.github.io/PATENTS.txt
       ha-switch {
         padding-bottom: 8px;
       }
-    `}};t([Z()],$t.prototype,"hass",void 0),t([Z()],$t.prototype,"_config",void 0),$t=t([B("select-list-card-editor")],$t);console.info(`%c  select-list-card \n%c  ${Vt("common.version")} 0.2.3    `,"color: orange; font-weight: bold; background: black","color: white; font-weight: bold; background: dimgray"),window.customCards=window.customCards||[],window.customCards.push({type:"select-list-card",name:""+Vt("common.name"),description:""+Vt("common.description"),preview:!0});let kt=class extends et{static async getConfigElement(){return document.createElement("select-list-card-editor")}static getStubConfig(t,e){return{entity:e.find(t=>t.startsWith("input_select"))||"",name:"",truncate:!0,scroll_to_selected:!0,max_options:5}}setConfig(t){if(!t||!t.entity||!t.entity.startsWith("input_select")||t.show_error)throw new Error(Vt("error.invalid_configuration"));t.test_gui&&function(){var t=document.querySelector("home-assistant");if(t=(t=(t=(t=(t=(t=(t=(t=t&&t.shadowRoot)&&t.querySelector("home-assistant-main"))&&t.shadowRoot)&&t.querySelector("app-drawer-layout partial-panel-resolver"))&&t.shadowRoot||t)&&t.querySelector("ha-panel-lovelace"))&&t.shadowRoot)&&t.querySelector("hui-root")){var e=t.lovelace;return e.current_view=t.___curView,e}return null}().setEditMode(!0),this.config=Object.assign({title:"",truncate:!0,scroll_to_selected:!0,max_options:5},t)}shouldUpdate(t){return function(t,e,i){if(e.has("config")||i)return!0;if(t.config.entity){var n=e.get("hass");return!n||n.states[t.config.entity]!==t.hass.states[t.config.entity]}return!1}(this,t,!1)}render(){if(!this.config.entity)return Y`
+    `}};t([Z()],$t.prototype,"hass",void 0),t([Z()],$t.prototype,"_config",void 0),$t=t([B("select-list-card-editor")],$t);var kt;console.info(`%c  select-list-card \n%c  ${Vt("common.version")} 1.0.0    `,"color: orange; font-weight: bold; background: black","color: white; font-weight: bold; background: dimgray"),window.customCards=window.customCards||[],window.customCards.push({type:"select-list-card",name:""+Vt("common.name"),description:""+Vt("common.description"),preview:!0});let Ot=kt=class extends et{static async getConfigElement(){return document.createElement("select-list-card-editor")}static getStubConfig(t,e){return{entity:e.find(t=>t.startsWith("input_select"))||"",name:"",truncate:!0,scroll_to_selected:!0,max_options:5}}setConfig(t){if(!t||!t.entity||!t.entity.startsWith("input_select")||t.show_error)throw new Error(Vt("error.invalid_configuration"));t.test_gui&&function(){var t=document.querySelector("home-assistant");if(t=(t=(t=(t=(t=(t=(t=(t=t&&t.shadowRoot)&&t.querySelector("home-assistant-main"))&&t.shadowRoot)&&t.querySelector("app-drawer-layout partial-panel-resolver"))&&t.shadowRoot||t)&&t.querySelector("ha-panel-lovelace"))&&t.shadowRoot)&&t.querySelector("hui-root")){var e=t.lovelace;return e.current_view=t.___curView,e}return null}().setEditMode(!0),this.config=Object.assign({title:"",truncate:!0,scroll_to_selected:!0,max_options:5},t)}shouldUpdate(t){return function(t,e,i){if(e.has("config")||i)return!0;if(t.config.entity){var n=e.get("hass");return!n||n.states[t.config.entity]!==t.hass.states[t.config.entity]}return!1}(this,t,!1)}render(){if(!this.config.entity)return Y`
         <ha-card>
           <div class="preview not-available">
             <div class="metadata">
@@ -266,18 +266,18 @@ found at http://polymer.github.io/PATENTS.txt
           .selected=${e.indexOf(t)}
           style="${i}"
         >
-          ${e.map(t=>{const e=this.config.truncate?Y`
-                  <div class="truncate-item">${t}</div>
-                `:t;return Y`
-              <paper-item>${e}</paper-item>
-            `})}
+          ${e.map(t=>this.config.truncate?Y`
+                <paper-item title="${t}"><div class="truncate-item">${t}</div></paper-item>
+              `:Y`
+              <paper-item>${t}</paper-item>
+            `)}
         </paper-listbox>
       </ha-card>
     `}showWarning(t){return Y`
       <hui-warning>${t}</hui-warning>
     `}showError(t){const e=document.createElement("hui-error-card");return e.setConfig({type:"error",error:t,origConfig:this.config}),Y`
       ${e}
-    `}async _selectedOptionChanged(t){const e=t.detail.item.innerText.trim(),i=this.hass.states[this.config.entity].state;this.config.scroll_to_selected&&(t.path[0].scrollTop=t.detail.item.offsetTop-(t.path[0].offsetTop+8)),e!==i&&await this.setInputSelectOption(this.hass,this.config.entity,e)}setInputSelectOption(t,e,i){return t.callService("input_select","select_option",{option:i,entity_id:e})}static get styles(){return X`
+    `}async _selectedOptionChanged(t){const e=t.detail.item.innerText.trim(),i=this.hass.states[this.config.entity].state;this.config.scroll_to_selected&&(t.path[0].scrollTop=t.detail.item.offsetTop-(t.path[0].offsetTop+8)),e!==i&&await kt.setInputSelectOption(this.hass,this.config.entity,e)}static setInputSelectOption(t,e,i){return t.callService("input_select","select_option",{option:i,entity_id:e})}static get styles(){return X`
       select-list-card:focus {
         outline: none;
       }
@@ -318,4 +318,4 @@ found at http://polymer.github.io/PATENTS.txt
         white-space: nowrap;
         text-overflow: ellipsis;
       }
-    `}};t([Z()],kt.prototype,"hass",void 0),t([Z()],kt.prototype,"config",void 0),kt=t([B("select-list-card")],kt);export{kt as SelectListCard};
+    `}};t([Z()],Ot.prototype,"hass",void 0),t([Z()],Ot.prototype,"config",void 0),Ot=kt=t([B("select-list-card")],Ot);export{Ot as SelectListCard};

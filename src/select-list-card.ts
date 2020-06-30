@@ -97,13 +97,13 @@ export class SelectListCard extends LitElement {
           style="${style}"
         >
           ${options.map(option => {
-            const item = this.config.truncate
-              ? html`
-                  <div class="truncate-item">${option}</div>
-                `
-              : option;
+            if (this.config.truncate) {
+              return html`
+                <paper-item title="${option}"><div class="truncate-item">${option}</div></paper-item>
+              `;
+            }
             return html`
-              <paper-item>${item}</paper-item>
+              <paper-item>${option}</paper-item>
             `;
           })}
         </paper-listbox>
@@ -129,6 +129,7 @@ export class SelectListCard extends LitElement {
       ${errorCard}
     `;
   }
+
   private async _selectedOptionChanged(ev: any): Promise<any> {
     const option = ev.detail.item.innerText.trim();
     const selected = this.hass.states[this.config.entity].state;
@@ -138,10 +139,10 @@ export class SelectListCard extends LitElement {
     if (option === selected) {
       return;
     }
-    await this.setInputSelectOption(this.hass, this.config.entity, option);
+    await SelectListCard.setInputSelectOption(this.hass, this.config.entity, option);
   }
 
-  private setInputSelectOption(hass: HomeAssistant, entity: string, option: string): Promise<any> {
+  private static setInputSelectOption(hass: HomeAssistant, entity: string, option: string): Promise<any> {
     return hass.callService('input_select', 'select_option', {
       option,
       entity_id: entity,
