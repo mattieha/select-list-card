@@ -52,19 +52,19 @@ export class SelectListCardEditor extends LitElement implements LovelaceCardEdit
     return true;
   }
 
-  get _scrollInToView(): boolean {
+  get _scroll_to_selected(): boolean {
     if (this._config) {
-      return this._config.scrollInToView || true;
+      return this._config.scroll_to_selected || true;
     }
 
     return true;
   }
 
-  get _maxHeight(): string {
+  get _max_options(): number {
     if (this._config) {
-      return this._config.maxHeight || '350';
+      return this._config.max_options || 5;
     }
-    return '350';
+    return 5;
   }
 
   protected render(): TemplateResult | void {
@@ -103,9 +103,9 @@ export class SelectListCardEditor extends LitElement implements LovelaceCardEdit
           </div>
           <div class="row">
             <paper-input
-              label="Max height (0 = no max)"
-              .value=${this._maxHeight}
-              .configValue=${'maxHeight'}
+              label="Max options (0 = show all)"
+              .value=${this._max_options}
+              .configValue=${'max_options'}
               type="number"
               @value-changed=${this._valueChanged}
             ></paper-input>
@@ -121,11 +121,11 @@ export class SelectListCardEditor extends LitElement implements LovelaceCardEdit
           </div>
           <div class="row">
             <ha-switch
-              aria-label=${`Toggle scroll in to view ${this._truncate ? 'off' : 'on'}`}
-              .checked=${this._scrollInToView}
-              .configValue=${'scrollInToView'}
+              aria-label=${`Toggle scroll to selected ${this._truncate ? 'off' : 'on'}`}
+              .checked=${this._scroll_to_selected}
+              .configValue=${'scroll_to_selected'}
               @change=${this._valueChanged}
-              >Scroll selected in to view?</ha-switch
+              >Scroll to selected?</ha-switch
             >
           </div>
         </div>
@@ -151,16 +151,17 @@ export class SelectListCardEditor extends LitElement implements LovelaceCardEdit
       return;
     }
     const target = ev.target;
-    if (this[`_${target.configValue}`] === target.value) {
+    const value = target.configValue === 'max_options' ? parseInt(target.value) : target.value;
+    if (this[`_${target.configValue}`] === value) {
       return;
     }
     if (target.configValue) {
-      if (target.value === '') {
+      if (value === '') {
         delete this._config[target.configValue];
       } else {
         this._config = {
           ...this._config,
-          [target.configValue]: target.checked !== undefined ? target.checked : target.value,
+          [target.configValue]: target.checked !== undefined ? target.checked : value,
         };
       }
     }
@@ -170,11 +171,10 @@ export class SelectListCardEditor extends LitElement implements LovelaceCardEdit
   static get styles(): CSSResult {
     return css`
       .row {
-        margin-bottom: 15px;
+        margin-bottom: 5px;
       }
       .values {
         padding-left: 0px;
-        background: var(--secondary-background-color);
       }
       paper-dropdown-menu {
         width: 100%;

@@ -2,7 +2,14 @@
 
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg?style=for-the-badge)](https://github.com/custom-components/hacs)
 
-Display an input_select entity as a list
+Display the options of an input_select entity as a clickable list card.   
+In other words: the content of the dropdown menu is displayed as a card.  
+
+Some use cases:
+* Select with (too) many options
+* Options with long titles
+* Have all options directly shown 
+* You dont't want the extra click to open the dropdown menu  
 
 ## Usage
 
@@ -25,14 +32,14 @@ entity: input_select.scenes
 
 ## Options
 
-| Name              | Type    | Requirement  | Description                                 | Default             |
-| ----------------- | ------- | ------------ | ------------------------------------------- | ------------------- |
-| type              | string  | **Required** | `custom:select-list-card`                   |
-| entity            | string  | **Required** | Home Assistant input_select ID.             | `none`              |
-| name              | string  | **Optional** | Card name                                   | ``                  |
-| truncate          | boolean | **Optional** | Truncate option text                        | `true`              |
-| scrollInToView    | boolean | **Optional** | Scroll active item in to view               | `true`              |
-| maxHeight         | string  | **Optional** | Max height of the list                      | `350`               |
+| Name               | Type    | Requirement  | Description                                 | Default             |
+| ------------------ | ------- | ------------ | ------------------------------------------- | ------------------- |
+| type               | string  | **Required** | `custom:select-list-card`                   |                     |
+| entity             | string  | **Required** | Entity id of an input_select                |                     |
+| name               | string  | **Optional** | Card name                                   | ``                  |
+| truncate           | boolean | **Optional** | Truncate option text                        | `true`              |
+| scroll_to_selected | boolean | **Optional** | Scroll to selected option                   | `true`              |
+| max_options        | number  | **Optional** | Max options before scroll bar shows         | `5`                 |
 
 
 ## Installation

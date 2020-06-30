@@ -53,7 +53,8 @@ export class SelectListCard extends LitElement {
     this.config = {
       name: '',
       truncate: true,
-      scrollInToView: true,
+      scroll_to_selected: true,
+      max_options: 5,
       ...config,
     };
   }
@@ -65,7 +66,7 @@ export class SelectListCard extends LitElement {
   protected render(): TemplateResult | void {
     const selected = this.hass.states[this.config.entity].state;
     const options = this.hass.states[this.config.entity].attributes.options;
-    const style = this.config.maxHeight !== '0' ? `max-height: ${this.config.maxHeight}px` : '';
+    const style = this.config.max_options === 0 ? '' : `max-height: ${(this.config.max_options || 5) * 48}px`;
     return html`
       <ha-card .header=${this.config.name} aria-label=${`Select list card: ${this.config.entity}`}>
         <paper-listbox
@@ -109,13 +110,12 @@ export class SelectListCard extends LitElement {
   private async _selectedOptionChanged(ev: any): Promise<any> {
     const option = ev.detail.item.innerText.trim();
     const selected = this.hass.states[this.config.entity].state;
-    if (this.config.scrollInToView) {
+    if (this.config.scroll_to_selected) {
       ev.path[0].scrollTop = ev.detail.item.offsetTop - (ev.path[0].offsetTop + 8);
     }
     if (option === selected) {
       return;
     }
-    console.log('EV', ev);
     await this.setInputSelectOption(this.hass, this.config.entity, option);
   }
 

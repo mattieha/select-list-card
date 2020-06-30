@@ -5,7 +5,7 @@ export interface SelectListCardConfig extends LovelaceCardConfig {
   name?: string;
   entity: string;
   truncate?: boolean;
-  scrollInToView?: boolean;
-  maxHeight: string;
+  scroll_to_selected?: boolean;
+  max_options?: number;
   test_gui?: boolean;
 }
