@@ -6,7 +6,7 @@ Display the options of an input_select entity as a clickable list card.
 In other words: the content of the dropdown menu is displayed as a card.  
 
 Some use cases:
-* Select with (too) many options
+* Select with too many options to show in dropdown
 * Options with long titles
 * Have all options directly shown 
 * You dont't want the extra click to open the dropdown menu  

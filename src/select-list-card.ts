@@ -24,8 +24,9 @@ console.info(
 (window as any).customCards = (window as any).customCards || [];
 (window as any).customCards.push({
   type: 'select-list-card',
-  name: 'Select list Card',
-  description: 'Display an input_select as a list',
+  name: `${localize('common.name')}`,
+  description: `${localize('common.description')}`,
+  preview: true,
 });
 
 @customElement('select-list-card')
@@ -34,8 +35,16 @@ export class SelectListCard extends LitElement {
     return document.createElement('select-list-card-editor') as LovelaceCardEditor;
   }
 
-  public static getStubConfig(): object {
-    return {};
+  public static getStubConfig(hass, entities): object {
+    const entity = entities.find(item => item.startsWith('input_select'));
+    const dummy = hass;
+    return {
+      entity: entity || '',
+      name: '',
+      truncate: true,
+      scroll_to_selected: false,
+      max_options: 3,
+    };
   }
 
   @property() public hass!: HomeAssistant;
@@ -43,7 +52,7 @@ export class SelectListCard extends LitElement {
 
   public setConfig(config: SelectListCardConfig): void {
     if (!config || !config.entity || !config.entity.startsWith('input_select') || config.show_error) {
-      throw new Error(localize('common.invalid_configuration'));
+      throw new Error(localize('error.invalid_configuration'));
     }
 
     if (config.test_gui) {
@@ -51,7 +60,7 @@ export class SelectListCard extends LitElement {
     }
 
     this.config = {
-      name: '',
+      title: '',
       truncate: true,
       scroll_to_selected: true,
       max_options: 5,
@@ -64,11 +73,24 @@ export class SelectListCard extends LitElement {
   }
 
   protected render(): TemplateResult | void {
+    if (!this.config.entity) {
+      return html`
+        <ha-card>
+          <div class="preview not-available">
+            <div class="metadata">
+              <div class="not-available">
+                ${localize('error.not_available')}
+              </div>
+            <div>
+          </div>
+        </ha-card>
+      `;
+    }
     const selected = this.hass.states[this.config.entity].state;
     const options = this.hass.states[this.config.entity].attributes.options;
-    const style = this.config.max_options === 0 ? '' : `max-height: ${(this.config.max_options || 5) * 48}px`;
+    const style = this.config.max_options === 0 ? '' : `max-height: ${(this.config.max_options || 5) * 48 + 16}px`;
     return html`
-      <ha-card .header=${this.config.name} aria-label=${`Select list card: ${this.config.entity}`}>
+      <ha-card .header=${this.config.title} aria-label=${`Select list card: ${this.config.entity}`}>
         <paper-listbox
           @iron-select=${this._selectedOptionChanged}
           .selected=${options.indexOf(selected)}

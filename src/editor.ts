@@ -1,36 +1,20 @@
 import { LitElement, html, customElement, property, TemplateResult, CSSResult, css } from 'lit-element';
 import { HomeAssistant, fireEvent, LovelaceCardEditor } from 'custom-card-helpers';
-
+import { localize } from './localize/localize';
 import { SelectListCardConfig } from './types';
-
-const options = {
-  required: {
-    icon: 'tune',
-    name: 'Required',
-    secondary: 'Required options for this card to function',
-    show: true,
-  },
-  appearance: {
-    icon: 'palette',
-    name: 'Appearance',
-    secondary: 'Customize the name, max-height, truncate',
-    show: true,
-  },
-};
 
 @customElement('select-list-card-editor')
 export class SelectListCardEditor extends LitElement implements LovelaceCardEditor {
   @property() public hass?: HomeAssistant;
   @property() private _config?: SelectListCardConfig;
-  @property() private _toggle?: boolean;
 
   public setConfig(config: SelectListCardConfig): void {
     this._config = config;
   }
 
-  get _name(): string {
+  get _title(): string {
     if (this._config) {
-      return this._config.name || '';
+      return this._config.title || '';
     }
 
     return '';
@@ -62,7 +46,7 @@ export class SelectListCardEditor extends LitElement implements LovelaceCardEdit
 
   get _max_options(): number {
     if (this._config) {
-      return this._config.max_options || 5;
+      return typeof this._config.max_options !== 'undefined' ? this._config.max_options : 5;
     }
     return 5;
   }
@@ -80,7 +64,7 @@ export class SelectListCardEditor extends LitElement implements LovelaceCardEdit
         <div class="values">
           <div class="row">
             <paper-dropdown-menu
-              label="Entity (Required)"
+              label="${localize('editor.entity')}"
               @value-changed=${this._valueChanged}
               .configValue=${'entity'}
             >
@@ -95,15 +79,15 @@ export class SelectListCardEditor extends LitElement implements LovelaceCardEdit
           </div>
           <div class="row">
             <paper-input
-              label="Name (Optional)"
-              .value=${this._name}
-              .configValue=${'name'}
+              label="${localize('editor.title')}"
+              .value=${this._title}
+              .configValue=${'title'}
               @value-changed=${this._valueChanged}
             ></paper-input>
           </div>
           <div class="row">
             <paper-input
-              label="Max options (0 = show all)"
+              label="${localize('editor.max_options')}"
               .value=${this._max_options}
               .configValue=${'max_options'}
               type="number"
@@ -116,34 +100,21 @@ export class SelectListCardEditor extends LitElement implements LovelaceCardEdit
               .checked=${this._truncate}
               .configValue=${'truncate'}
               @change=${this._valueChanged}
-              >Truncate long names?</ha-switch
+              >${localize('editor.truncate')}</ha-switch
             >
           </div>
           <div class="row">
             <ha-switch
-              aria-label=${`Toggle scroll to selected ${this._truncate ? 'off' : 'on'}`}
+              aria-label=${`Toggle scroll to selected ${this._scroll_to_selected ? 'off' : 'on'}`}
               .checked=${this._scroll_to_selected}
               .configValue=${'scroll_to_selected'}
               @change=${this._valueChanged}
-              >Scroll to selected?</ha-switch
+              >${localize('editor.scroll_to_selected')}</ha-switch
             >
           </div>
         </div>
       </div>
     `;
-  }
-
-  private _toggleOption(ev): void {
-    this._toggleThing(ev, options);
-  }
-
-  private _toggleThing(ev, optionList): void {
-    const show = !optionList[ev.target.option].show;
-    for (const [key] of Object.entries(optionList)) {
-      optionList[key].show = false;
-    }
-    optionList[ev.target.option].show = show;
-    this._toggle = !this._toggle;
   }
 
   private _valueChanged(ev): void {
@@ -156,7 +127,7 @@ export class SelectListCardEditor extends LitElement implements LovelaceCardEdit
       return;
     }
     if (target.configValue) {
-      if (value === '') {
+      if (value === '' && target.configValue !== 'entity') {
         delete this._config[target.configValue];
       } else {
         this._config = {

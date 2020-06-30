@@ -1,0 +1,20 @@
+
+{
+  "common": {
+    "version": "Versie",
+    "name": "Select lijst kaart",
+    "description": "Toon de opties van een input_select entiteit in een kaart"
+  },
+  "error": {
+    "missing_entity": "Het specificeren van een entiteit is verplicht!",
+    "invalid_configuration": "Geen geldige configuratie",
+    "not_available": "Entiteit is niet beschikbaar"
+  },
+  "editor": {
+    "entity": "Entiteit (verplicht)",
+    "title": "Kaart titel (optioneel)",
+    "max_options": "Aantal opties zichtbaar (0 = alles)",
+    "truncate": "Kap lange optie name af",
+    "scroll_to_selected": "Geselecteerde optie altijd zichtbaar"
+  }
+}

@@ -1,7 +1,19 @@
 {
   "common": {
     "version": "Version",
+    "name": "Select list card",
+    "description": "Display the options of an input_select entity as a clickable list card."
+  },
+  "error": {
+    "missing_entity": "Entity is required",
     "invalid_configuration": "Invalid configuration",
-    "show_warning": "Show Warning"
+    "not_available": "Entity is not available"
+  },
+  "editor": {
+    "entity": "Entity (required)",
+    "title": "Card title (optional)",
+    "max_options": "NUmber of options shown (0 = all)",
+    "truncate": "Truncate long option name",
+    "scroll_to_selected": "Selected option always in view"
   }
 }
