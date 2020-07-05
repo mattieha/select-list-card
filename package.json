@@ -14,7 +14,7 @@
   "author": "M Hoog Antink",
   "license": "MIT",
   "dependencies": {
-    "custom-card-helpers": "^1.6.3",
+    "custom-card-helpers": "^1.6.5",
     "home-assistant-js-websocket": "^4.4.0",
     "lit-element": "^2.2.1",
     "lit-html": "^1.1.2"

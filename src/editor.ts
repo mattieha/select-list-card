@@ -127,7 +127,7 @@ export class SelectListCardEditor extends LitElement implements LovelaceCardEdit
       return;
     }
     if (target.configValue) {
-      if (value === '' && target.configValue !== 'entity') {
+      if (value === '' && target.configValue !== 'entity' && target.configValue !== 'title') {
         delete this._config[target.configValue];
       } else {
         this._config = {

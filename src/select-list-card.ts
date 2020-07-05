@@ -30,7 +30,7 @@ console.info(
 });
 
 @customElement('select-list-card')
-export class SelectListCard extends LitElement {
+export class SelectListCard extends LitElement implements LovelaceCard {
   public static async getConfigElement(): Promise<LovelaceCardEditor> {
     return document.createElement('select-list-card-editor') as LovelaceCardEditor;
   }
@@ -40,7 +40,7 @@ export class SelectListCard extends LitElement {
     const dummy = hass;
     return {
       entity: entity || '',
-      name: '',
+      title: '',
       truncate: true,
       scroll_to_selected: true,
       max_options: 5,
@@ -49,9 +49,10 @@ export class SelectListCard extends LitElement {
 
   @property() public hass!: HomeAssistant;
   @property() private config!: SelectListCardConfig;
+  private options: string[] = [];
 
   public setConfig(config: SelectListCardConfig): void {
-    if (!config || !config.entity || !config.entity.startsWith('input_select') || config.show_error) {
+    if (!config || !config.entity || !config.entity.startsWith('input_select')) {
       throw new Error(localize('error.invalid_configuration'));
     }
 
@@ -66,6 +67,18 @@ export class SelectListCard extends LitElement {
       max_options: 5,
       ...config,
     };
+  }
+
+  public async getCardSize(): Promise<number> {
+    if (!this.config) {
+      return 0;
+    }
+    // +1 for the header
+    return (this.config.title ? 1 : 0) + (this.config.max_options ? this.config.max_options : this.options.length);
+    /*if (this._headerElement) {
+      const headerSize = computeCardSize(this._headerElement);
+      size += headerSize instanceof Promise ? await headerSize : headerSize;
+    }*/
   }
 
   protected shouldUpdate(changedProps: PropertyValues): boolean {
@@ -87,19 +100,40 @@ export class SelectListCard extends LitElement {
       `;
     }
     const selected = this.hass.states[this.config.entity].state;
-    const options = this.hass.states[this.config.entity].attributes.options;
+    // this.offsetWidth < this.scrollWidth
+    this.options = this.hass.states[this.config.entity].attributes.options;
     const style = this.config.max_options === 0 ? '' : `max-height: ${(this.config.max_options || 5) * 48 + 16}px`;
     return html`
-      <ha-card .header=${this.config.title} aria-label=${`Select list card: ${this.config.entity}`}>
+      <ha-card aria-label=${`Select list card: ${this.config.entity}`}>
+        ${this.config.title && this.config.title.length
+          ? html`
+              <div class="card-header">
+                <div class="name">
+                  ${this.config.title}
+                </div>
+              </div>
+            `
+          : ''}
         <paper-listbox
           @iron-select=${this._selectedOptionChanged}
-          .selected=${options.indexOf(selected)}
+          .selected=${this.options.indexOf(selected)}
           style="${style}"
         >
-          ${options.map(option => {
+          ${this.options.map(option => {
             if (this.config.truncate) {
               return html`
-                <paper-item title="${option}"><div class="truncate-item">${option}</div></paper-item>
+                <paper-item title="${option}">
+                  <div class="wrap">
+                    <div
+                      class="marquee-inner"
+                      @mouseover=${this._marqueeMouseOver}
+                      @mouseleave=${this._marqueeMouseLeave}
+                    >
+                      <span>${option}</span>
+                      <span class="extra-text">${option}</span>
+                    </div>
+                  </div>
+                </paper-item>
               `;
             }
             return html`
@@ -109,6 +143,37 @@ export class SelectListCard extends LitElement {
         </paper-listbox>
       </ha-card>
     `;
+  }
+  private _marqueeMouseOver(e): void {
+    const elements = this.getMarquee(e.path);
+    if (!elements.marquee || !elements.span) {
+      return;
+    }
+    if (elements.span.offsetWidth > elements.marquee.offsetWidth && !elements.marquee.classList.contains('hovering')) {
+      // const newDelay = defaultDelay*(width/defaultWidth);
+      const newDelay = 10 * (elements.span.offsetWidth / elements.marquee.offsetWidth);
+      elements.marquee.style.animationDuration = newDelay;
+      console.log('newDelay: ', newDelay);
+      elements.marquee.classList.add('hovering');
+      // console.log('SHOULD ANIMATE', marquee, span);
+    }
+  }
+
+  private _marqueeMouseLeave(e): void {
+    // console.log(e);
+    const elements = this.getMarquee(e.path);
+    if (!elements.marquee || !elements.span) {
+      return;
+    }
+    elements.marquee.classList.remove('hovering');
+  }
+
+  private getMarquee(path): any {
+    const marquee = path.find(item => item.classList.contains('marquee-inner'));
+    return {
+      marquee,
+      span: typeof marquee !== 'undefined' ? marquee.children[0] : undefined,
+    };
   }
 
   private showWarning(warning: string): TemplateResult {
@@ -190,6 +255,45 @@ export class SelectListCard extends LitElement {
         overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;
+      }
+      .wrap {
+        position: relative;
+        width: 100%;
+        height: 48px;
+        line-height: 48px;
+        margin-left: 16px;
+        margin-right: 16px;
+        overflow: hidden;
+      }
+      .marquee-inner {
+        position: absolute;
+        left: 0;
+        right: 0;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+      }
+      .marquee-inner.hovering {
+        text-overflow: initial;
+        overflow: initial;
+        left: initial;
+        right: initial;
+        animation: marquee 10s linear infinite;
+      }
+      .marquee-inner .extra-text {
+        visibility: hidden;
+      }
+      .marquee-inner.hovering .extra-text {
+        visibility: visible;
+        padding-left: 16px;
+      }
+      @keyframes marquee {
+        0% {
+          transform: translateX(0%);
+        }
+        100% {
+          transform: translateX(-100%);
+        }
       }
     `;
   }
