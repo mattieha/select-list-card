@@ -13,8 +13,10 @@
   "editor": {
     "entity": "Entiteit (verplicht)",
     "title": "Kaart titel (optioneel)",
+    "icon": "Icoon (optioneel)",
     "max_options": "Aantal opties zichtbaar (0 = alles)",
     "truncate": "Kap lange optie name af",
+    "show_toggle": "Toon toggle in titel",
     "scroll_to_selected": "Geselecteerde optie altijd zichtbaar"
   }
 }

@@ -1,5 +1,5 @@
 import { LitElement, html, customElement, property, TemplateResult, CSSResult, css } from 'lit-element';
-import { HomeAssistant, fireEvent, LovelaceCardEditor } from 'custom-card-helpers';
+import { HomeAssistant, fireEvent, LovelaceCardEditor, stateIcon } from 'custom-card-helpers';
 import { localize } from './localize/localize';
 import { SelectListCardConfig } from './types';
 
@@ -15,6 +15,14 @@ export class SelectListCardEditor extends LitElement implements LovelaceCardEdit
   get _title(): string {
     if (this._config) {
       return this._config.title || '';
+    }
+
+    return '';
+  }
+
+  get _icon(): string {
+    if (this._config) {
+      return this._config.icon || '';
     }
 
     return '';
@@ -39,6 +47,14 @@ export class SelectListCardEditor extends LitElement implements LovelaceCardEdit
   get _scroll_to_selected(): boolean {
     if (this._config) {
       return this._config.scroll_to_selected || true;
+    }
+
+    return true;
+  }
+
+  get _show_toggle(): boolean {
+    if (this._config) {
+      return this._config.show_toggle || true;
     }
 
     return true;
@@ -78,12 +94,29 @@ export class SelectListCardEditor extends LitElement implements LovelaceCardEdit
             </paper-dropdown-menu>
           </div>
           <div class="row">
-            <paper-input
-              label="${localize('editor.title')}"
-              .value=${this._title}
-              .configValue=${'title'}
-              @value-changed=${this._valueChanged}
-            ></paper-input>
+            <div class="side-by-side">
+              <paper-input
+                label="${localize('editor.title')}"
+                .value=${this._title}
+                .configValue=${'title'}
+                @value-changed=${this._valueChanged}
+              ></paper-input>
+              <paper-input
+                .configValue=${'icon'}
+                .value=${this._icon}
+                .label="${localize('editor.icon')}"
+                .placeholder=${this._icon || stateIcon(this.hass.states[this._entity])}
+                @value-changed=${this._valueChanged}
+                pattern="^\\\\S+:\\\\S+$"
+              >
+                ${this._icon || stateIcon(this.hass.states[this._entity])
+                  ? html`
+                      <ha-icon .icon=${this._icon || stateIcon(this.hass.states[this._entity])} slot="suffix">
+                      </ha-icon>
+                    `
+                  : ''}
+              </paper-input>
+            </div>
           </div>
           <div class="row">
             <paper-input
@@ -112,6 +145,15 @@ export class SelectListCardEditor extends LitElement implements LovelaceCardEdit
               >${localize('editor.scroll_to_selected')}</ha-switch
             >
           </div>
+          <div class="row">
+            <ha-switch
+              aria-label=${`Toggle show toggle ${this._show_toggle ? 'off' : 'on'}`}
+              .checked=${this._show_toggle}
+              .configValue=${'show_toggle'}
+              @change=${this._valueChanged}
+              >${localize('editor.show_toggle')}</ha-switch
+            >
+          </div>
         </div>
       </div>
     `;
@@ -126,8 +168,9 @@ export class SelectListCardEditor extends LitElement implements LovelaceCardEdit
     if (this[`_${target.configValue}`] === value) {
       return;
     }
+    const skipValues = ['entity', 'title', 'icon'];
     if (target.configValue) {
-      if (value === '' && target.configValue !== 'entity') {
+      if (value === '' && !skipValues.includes(target.configValue)) {
         delete this._config[target.configValue];
       } else {
         this._config = {
@@ -152,6 +195,13 @@ export class SelectListCardEditor extends LitElement implements LovelaceCardEdit
       }
       ha-switch {
         padding-bottom: 8px;
+      }
+      .side-by-side {
+        display: flex;
+      }
+      .side-by-side > * {
+        flex: 1;
+        padding-right: 4px;
       }
     `;
   }

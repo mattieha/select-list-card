@@ -12,8 +12,10 @@
   "editor": {
     "entity": "Entity (required)",
     "title": "Card title (optional)",
+    "icon": "Icon (optional)",
     "max_options": "Number of options shown (0 = all)",
     "truncate": "Truncate long option name",
+    "show_toggle": "Show toggle in header",
     "scroll_to_selected": "Selected option always in view"
   }
 }

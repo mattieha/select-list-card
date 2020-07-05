@@ -1,4 +1,15 @@
-import { LitElement, html, customElement, property, CSSResult, TemplateResult, css, PropertyValues } from 'lit-element';
+import { HassEntity } from 'home-assistant-js-websocket';
+import {
+  LitElement,
+  html,
+  customElement,
+  property,
+  CSSResult,
+  TemplateResult,
+  css,
+  PropertyValues,
+  query,
+} from 'lit-element';
 import {
   HomeAssistant,
   hasConfigOrEntityChanged,
@@ -30,7 +41,7 @@ console.info(
 });
 
 @customElement('select-list-card')
-export class SelectListCard extends LitElement {
+export class SelectListCard extends LitElement implements LovelaceCard {
   public static async getConfigElement(): Promise<LovelaceCardEditor> {
     return document.createElement('select-list-card-editor') as LovelaceCardEditor;
   }
@@ -41,6 +52,7 @@ export class SelectListCard extends LitElement {
     return {
       entity: entity || '',
       name: '',
+      icon: '',
       truncate: true,
       scroll_to_selected: true,
       max_options: 5,
@@ -49,9 +61,12 @@ export class SelectListCard extends LitElement {
 
   @property() public hass!: HomeAssistant;
   @property() private config!: SelectListCardConfig;
+  @property() private open = true;
+  @query('#list') private listEl;
+  private options: string[] = [];
 
   public setConfig(config: SelectListCardConfig): void {
-    if (!config || !config.entity || !config.entity.startsWith('input_select') || config.show_error) {
+    if (!config || !config.entity || !config.entity.startsWith('input_select')) {
       throw new Error(localize('error.invalid_configuration'));
     }
 
@@ -61,11 +76,26 @@ export class SelectListCard extends LitElement {
 
     this.config = {
       title: '',
+      icon: '',
+      show_toggle: false,
       truncate: true,
       scroll_to_selected: true,
       max_options: 5,
       ...config,
     };
+    this.open = this.open || this.config.open;
+  }
+
+  public async getCardSize(): Promise<number> {
+    if (!this.config) {
+      return 0;
+    }
+    // +1 for the header
+    return (this.config.title ? 1 : 0) + (this.config.max_options ? this.config.max_options : this.options.length);
+    /*if (this._headerElement) {
+     const headerSize = computeCardSize(this._headerElement);
+     size += headerSize instanceof Promise ? await headerSize : headerSize;
+     }*/
   }
 
   protected shouldUpdate(changedProps: PropertyValues): boolean {
@@ -86,17 +116,48 @@ export class SelectListCard extends LitElement {
         </ha-card>
       `;
     }
-    const selected = this.hass.states[this.config.entity].state;
-    const options = this.hass.states[this.config.entity].attributes.options;
+    const stateObj = this.stateObj;
+    const selected = stateObj.state;
+    this.options = stateObj.attributes.options;
     const style = this.config.max_options === 0 ? '' : `max-height: ${(this.config.max_options || 5) * 48 + 16}px`;
     return html`
-      <ha-card .header=${this.config.title} aria-label=${`Select list card: ${this.config.entity}`}>
+      <ha-card aria-label=${`Select list card: ${this.config.entity}`}>
+        ${this.config.title && this.config.title.length
+          ? html`
+              <div
+                class="card-header ${this.config.show_toggle ? 'pointer' : ''}"
+                @click=${this.toggle}
+                ?open=${this.open}
+              >
+                <div class="name">
+                  ${this.config.icon && this.config.icon.length
+                    ? html`
+                        <ha-icon class="icon" .icon="${this.config.icon}"></ha-icon>
+                      `
+                    : ''}
+                  ${this.config.title}
+                </div>
+                ${this.config.show_toggle
+                  ? html`
+                      <ha-icon
+                        class="pointer"
+                        .icon="${this.open ? 'mdi:chevron-up' : 'mdi:chevron-down'}"
+                        @click=${this.toggle}
+                      >
+                      </ha-icon>
+                    `
+                  : ''}
+              </div>
+            `
+          : ''}
         <paper-listbox
-          @iron-select=${this._selectedOptionChanged}
-          .selected=${options.indexOf(selected)}
+          id="list"
+          @iron-select=${this.selectedOptionChanged}
+          .selected=${this.options.indexOf(selected)}
           style="${style}"
+          ?open=${this.open}
         >
-          ${options.map(option => {
+          ${this.options.map(option => {
             if (this.config.truncate) {
               return html`
                 <paper-item title="${option}"><div class="truncate-item">${option}</div></paper-item>
@@ -111,31 +172,34 @@ export class SelectListCard extends LitElement {
     `;
   }
 
-  private showWarning(warning: string): TemplateResult {
-    return html`
-      <hui-warning>${warning}</hui-warning>
-    `;
+  private get stateObj(): HassEntity {
+    return this.hass.states[this.config.entity] as HassEntity;
   }
 
-  private showError(error: string): TemplateResult {
-    const errorCard = document.createElement('hui-error-card') as LovelaceCard;
-    errorCard.setConfig({
-      type: 'error',
-      error,
-      origConfig: this.config,
-    });
-
-    return html`
-      ${errorCard}
-    `;
+  private toggle(): void {
+    if (!this.config.show_toggle) {
+      return;
+    }
+    this.open = !this.open;
+    if (this.open) {
+      const selected = this.listEl.querySelector('.iron-selected') as HTMLElement;
+      setTimeout(() => {
+        this.setScrollTop(selected.offsetTop);
+      }, 100);
+    }
   }
 
-  private async _selectedOptionChanged(ev: any): Promise<any> {
+  private setScrollTop(offsetTop: number): void {
+    if (!this.config.scroll_to_selected) {
+      return;
+    }
+    this.listEl.scrollTop = offsetTop - (this.listEl.offsetTop + 8);
+  }
+
+  private async selectedOptionChanged(ev: any): Promise<any> {
     const option = ev.detail.item.innerText.trim();
     const selected = this.hass.states[this.config.entity].state;
-    if (this.config.scroll_to_selected) {
-      ev.path[0].scrollTop = ev.detail.item.offsetTop - (ev.path[0].offsetTop + 8);
-    }
+    this.setScrollTop(ev.detail.item.offsetTop);
     if (option === selected) {
       return;
     }
@@ -149,18 +213,35 @@ export class SelectListCard extends LitElement {
     });
   }
 
+  private showWarning(warning: string): TemplateResult {
+    return html`
+      <hui-warning>${warning}</hui-warning>
+    `;
+  }
+
   static get styles(): CSSResult {
     return css`
       select-list-card:focus {
         outline: none;
       }
+      .card-header {
+        display: flex;
+        justify-content: space-between;
+      }
+      .pointer {
+        cursor: pointer;
+      }
       paper-listbox {
+        display: none;
         box-sizing: border-box;
         overflow-y: auto;
         overflow-x: hidden;
         scrollbar-color: var(--scrollbar-thumb-color) transparent;
         scrollbar-width: thin;
         background: var(--paper-card-background-color);
+      }
+      paper-listbox[open] {
+        display: block;
       }
       paper-listbox::-webkit-scrollbar {
         width: 0.4rem;
