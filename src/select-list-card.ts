@@ -54,16 +54,11 @@ export class SelectListCard extends LitElement implements LovelaceCard {
       name: '',
       icon: '',
       truncate: true,
+      show_toggle: false,
       scroll_to_selected: true,
       max_options: 5,
     };
   }
-
-  @property() public hass!: HomeAssistant;
-  @property() private config!: SelectListCardConfig;
-  @property() private open = true;
-  @query('#list') private listEl;
-  private options: string[] = [];
 
   public setConfig(config: SelectListCardConfig): void {
     if (!config || !config.entity || !config.entity.startsWith('input_select')) {
@@ -87,16 +82,20 @@ export class SelectListCard extends LitElement implements LovelaceCard {
   }
 
   public async getCardSize(): Promise<number> {
+    let size = 0;
     if (!this.config) {
-      return 0;
+      return size;
     }
-    // +1 for the header
-    return (this.config.title ? 1 : 0) + (this.config.max_options ? this.config.max_options : this.options.length);
-    /*if (this._headerElement) {
-     const headerSize = computeCardSize(this._headerElement);
-     size += headerSize instanceof Promise ? await headerSize : headerSize;
-     }*/
+    size += this.config.title ? 1 : 0;
+    size += this.config.max_options ? this.config.max_options : this.options.length;
+    return size;
   }
+
+  @property() public hass!: HomeAssistant;
+  @property() private config!: SelectListCardConfig;
+  @property() private open = true;
+  @query('#list') private listEl;
+  private options: string[] = [];
 
   protected shouldUpdate(changedProps: PropertyValues): boolean {
     return hasConfigOrEntityChanged(this, changedProps, false);
@@ -104,17 +103,7 @@ export class SelectListCard extends LitElement implements LovelaceCard {
 
   protected render(): TemplateResult | void {
     if (!this.config.entity) {
-      return html`
-        <ha-card>
-          <div class="preview not-available">
-            <div class="metadata">
-              <div class="not-available">
-                ${localize('error.not_available')}
-              </div>
-            <div>
-          </div>
-        </ha-card>
-      `;
+      return this.showError();
     }
     const stateObj = this.stateObj;
     const selected = stateObj.state;
@@ -139,12 +128,7 @@ export class SelectListCard extends LitElement implements LovelaceCard {
                 </div>
                 ${this.config.show_toggle
                   ? html`
-                      <ha-icon
-                        class="pointer"
-                        .icon="${this.open ? 'mdi:chevron-up' : 'mdi:chevron-down'}"
-                        @click=${this.toggle}
-                      >
-                      </ha-icon>
+                      <ha-icon class="pointer" .icon="${this.open ? 'mdi:chevron-up' : 'mdi:chevron-down'}"></ha-icon>
                     `
                   : ''}
               </div>
@@ -183,9 +167,11 @@ export class SelectListCard extends LitElement implements LovelaceCard {
     this.open = !this.open;
     if (this.open) {
       const selected = this.listEl.querySelector('.iron-selected') as HTMLElement;
-      setTimeout(() => {
-        this.setScrollTop(selected.offsetTop);
-      }, 100);
+      if (selected) {
+        setTimeout(() => {
+          this.setScrollTop(selected.offsetTop);
+        }, 100);
+      }
     }
   }
 
@@ -198,8 +184,10 @@ export class SelectListCard extends LitElement implements LovelaceCard {
 
   private async selectedOptionChanged(ev: any): Promise<any> {
     const option = ev.detail.item.innerText.trim();
-    const selected = this.hass.states[this.config.entity].state;
-    this.setScrollTop(ev.detail.item.offsetTop);
+    const selected = this.stateObj.state;
+    if (ev.detail && ev.detail.item) {
+      this.setScrollTop(ev.detail.item.offsetTop);
+    }
     if (option === selected) {
       return;
     }
@@ -213,10 +201,18 @@ export class SelectListCard extends LitElement implements LovelaceCard {
     });
   }
 
-  private showWarning(warning: string): TemplateResult {
+  private showError(): TemplateResult {
     return html`
-      <hui-warning>${warning}</hui-warning>
-    `;
+        <ha-card>
+          <div class="preview not-available">
+            <div class="metadata">
+              <div class="not-available">
+                ${localize('error.not_available')}
+              </div>
+            <div>
+          </div>
+        </ha-card>
+      `;
   }
 
   static get styles(): CSSResult {
@@ -227,6 +223,7 @@ export class SelectListCard extends LitElement implements LovelaceCard {
       .card-header {
         display: flex;
         justify-content: space-between;
+        user-select: none;
       }
       .pointer {
         cursor: pointer;

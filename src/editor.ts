@@ -54,10 +54,10 @@ export class SelectListCardEditor extends LitElement implements LovelaceCardEdit
 
   get _show_toggle(): boolean {
     if (this._config) {
-      return this._config.show_toggle || true;
+      return this._config.show_toggle || false;
     }
 
-    return true;
+    return false;
   }
 
   get _max_options(): number {
