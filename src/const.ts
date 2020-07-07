@@ -1,1 +1,2 @@
-export const CARD_VERSION = '1.1.2';
+import * as pack from '../package.json';
+export const CARD_VERSION = pack.version;

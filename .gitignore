@@ -2,5 +2,4 @@
 /.rpt2_cache/
 /.idea/
 /.vscode/
-/.devcontainer/
-package-lock.json
+
