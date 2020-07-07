@@ -1,6 +1,6 @@
 {
   "name": "select-list-card",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Lovelace select-list-card",
   "keywords": [
     "home-assistant",
@@ -43,12 +43,14 @@
     "rollup-plugin-terser": "^5.1.2",
     "rollup-plugin-typescript2": "^0.24.3",
     "rollup-plugin-uglify": "^6.0.3",
+    "standard-version": "^8.0.0",
     "typescript": "^3.6.4"
   },
   "scripts": {
     "start": "rollup -c --watch",
     "build": "npm run lint && npm run rollup",
     "lint": "eslint src/*.ts",
-    "rollup": "rollup -c"
+    "rollup": "rollup -c",
+    "release": "standard-version"
   }
 }

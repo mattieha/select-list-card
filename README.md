@@ -1,6 +1,8 @@
-# Select list Card by [@mattieha](https://github.com/mattieha)
+# Select list Card
 
-[![hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg?style=for-the-badge)](https://github.com/custom-components/hacs)
+[![GitHub Release][releases-shield]][releases]
+[![License][license-shield]](LICENSE.md)
+[![hacs_badge](https://img.shields.io/badge/HACS-default-orange.svg?style=for-the-badge)](https://github.com/custom-components/hacs)
 
 Display the options of an `input_select` entity as a clickable list card.   
 In other words: the content of the dropdown menu is displayed as a card.  
@@ -30,6 +32,8 @@ Select List Card supports Lovelace's Visual Editor. Click the + button to add a 
 | type               | string  | **required** | `custom:select-list-card`                                                   |
 | entity             | string  | **required** | An entity_id within the `input_select` domain.                              |
 | title              | string  |  ``          | Card header title                                                           |
+| icon               | string  |  ``          | Card header icon                                                            |
+| show_toggle        | boolean | `false`      | Card header toggle                                                          |
 | truncate           | boolean | `true`       | Truncate option text to fit 1 line                                          |
 | scroll_to_selected | boolean | `true`       | Scroll the list to the position of the selected option                      |
 | max_options        | number  | `5`          | Number of options before a scrollbar appears, 0 = no scrollbar              |
@@ -88,3 +92,6 @@ Hey dude! Help me out for a couple of :beers: or a :coffee:!
 [card-scroll-gif]: https://raw.githubusercontent.com/mattieha/select-list-card/master/assets/card_scroll.gif
 [latest-release]: https://github.com/mattieha/select-list-card/releases/latest
 [add-translation]: https://github.com/mattieha/select-list-card/tree/master/src/localize/languages
+[releases-shield]: https://img.shields.io/github/release/mattieha/select-list-card.svg?style=for-the-badge
+[releases]: https://github.com/mattieha/select-list-card/releases
+[license-shield]: https://img.shields.io/github/license/mattieha/select-list-card.svg?style=for-the-badge
