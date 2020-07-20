@@ -55,6 +55,7 @@ export class SelectListCard extends LitElement implements LovelaceCard {
       truncate: true,
       show_toggle: false,
       scroll_to_selected: true,
+      multi: false,
       max_options: 5,
     };
   }
@@ -75,6 +76,7 @@ export class SelectListCard extends LitElement implements LovelaceCard {
       truncate: true,
       scroll_to_selected: true,
       max_options: 5,
+      multi: false,
       ...config,
     };
     this.open = this.open || this.config.open;
@@ -133,24 +135,29 @@ export class SelectListCard extends LitElement implements LovelaceCard {
               </div>
             `
           : ''}
-        <paper-listbox
-          id="list"
-          @iron-select=${this.selectedOptionChanged}
-          .selected=${this.options.indexOf(selected)}
-          style="${style}"
-          ?open=${this.open}
-        >
-          ${this.options.map(option => {
-            if (this.config.truncate) {
-              return html`
-                <paper-item title="${option}"><div class="truncate-item">${option}</div></paper-item>
-              `;
-            }
-            return html`
-              <paper-item>${option}</paper-item>
-            `;
-          })}
-        </paper-listbox>
+        ${this.config.multi
+          ? html`
+              <paper-listbox
+                id="list"
+                @selected-items-changed=${this.selectedOptionsChanged}
+                style="${style}"
+                multi
+                ?open=${this.open}
+              >
+                ${this.generateOptions()}
+              </paper-listbox>
+            `
+          : html`
+              <paper-listbox
+                id="list"
+                @iron-select=${this.selectedOptionChanged}
+                .selected=${this.options.indexOf(selected)}
+                style="${style}"
+                ?open=${this.open}
+              >
+                ${this.generateOptions()}
+              </paper-listbox>
+            `}
       </ha-card>
     `;
   }
@@ -181,6 +188,11 @@ export class SelectListCard extends LitElement implements LovelaceCard {
     this.listEl.scrollTop = offsetTop - (this.listEl.offsetTop + 8);
   }
 
+  private async selectedOptionsChanged(ev: any): Promise<any> {
+    const options = ev.detail.value.map(item => item.innerText.trim());
+    console.log('EV', options);
+  }
+
   private async selectedOptionChanged(ev: any): Promise<any> {
     const option = ev.detail.item.innerText.trim();
     const selected = this.stateObj.state;
@@ -198,6 +210,21 @@ export class SelectListCard extends LitElement implements LovelaceCard {
       option,
       entity_id: entity,
     });
+  }
+
+  private generateOptions(): TemplateResult {
+    return html`
+      ${this.options.map(option => {
+        if (this.config.truncate) {
+          return html`
+            <paper-item title="${option}"><div class="truncate-item">${option}</div></paper-item>
+          `;
+        }
+        return html`
+          <paper-item>${option}</paper-item>
+        `;
+      })}
+    `;
   }
 
   private showError(): TemplateResult {
@@ -252,6 +279,7 @@ export class SelectListCard extends LitElement implements LovelaceCard {
         cursor: pointer;
       }
       paper-item:hover::before,
+      paper-listbox[multi] paper-item.iron-selected:focus::before,
       .iron-selected:before {
         position: var(--layout-fit_-_position);
         top: var(--layout-fit_-_top);
@@ -262,6 +290,10 @@ export class SelectListCard extends LitElement implements LovelaceCard {
         content: '';
         opacity: var(--dark-divider-opacity);
         pointer-events: none;
+        display: block;
+      }
+      paper-listbox[multi] paper-item:focus::before {
+        display: none;
       }
       .truncate-item {
         overflow: hidden;
