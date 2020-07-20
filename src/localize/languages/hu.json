@@ -1,0 +1,21 @@
+{
+  "common": {
+    "version": "Verzió",
+    "name": "Select list card",
+    "description": "Az input_select megjelenítése mint egy gördíthető, kattintható lista."
+  },
+  "error": {
+    "missing_entity": "Entitás megadása kötelező",
+    "invalid_configuration": "Hibás konfiguráció",
+    "not_available": "Az entitás nem elérhető"
+  },
+  "editor": {
+    "entity": "Entitás (kötelező)",
+    "title": "Kártya címe (opcionális)",
+    "icon": "Ikon (opcionális)",
+    "max_options": "Megjelenített sorok száma (0 = összes)",
+    "truncate": "Sor hosszának levágása egységes szélesség érdekében",
+    "show_toggle": "Kapcsoló megjelenítése a fejlécben",
+    "scroll_to_selected": "Előreugrás a kijelölt sorra"
+  }
+}
