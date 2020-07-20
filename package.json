@@ -10,6 +10,9 @@
     "lovelace",
     "custom-cards"
   ],
+  "repository": {
+    "url": "https://github.com/mattieha/select-list-card"
+  },
   "module": "select-list-card.js",
   "author": "M Hoog Antink",
   "license": "MIT",
@@ -43,7 +46,7 @@
     "rollup-plugin-terser": "^5.1.2",
     "rollup-plugin-typescript2": "^0.24.3",
     "rollup-plugin-uglify": "^6.0.3",
-    "standard-version": "^8.0.0",
+    "standard-version": ">=8.0.1",
     "typescript": "^3.6.4"
   },
   "scripts": {
