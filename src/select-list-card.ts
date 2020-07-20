@@ -51,7 +51,6 @@ export class SelectListCard extends LitElement implements LovelaceCard {
     const dummy = hass;
     return {
       entity: entity || '',
-      name: '',
       icon: '',
       truncate: true,
       show_toggle: false,

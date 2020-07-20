@@ -133,8 +133,9 @@ export class SelectListCardEditor extends LitElement implements LovelaceCardEdit
               .checked=${this._truncate}
               .configValue=${'truncate'}
               @change=${this._valueChanged}
-              >${localize('editor.truncate')}</ha-switch
             >
+            </ha-switch>
+            <span class="switch-label">${localize('editor.show_toggle')}</span>
           </div>
           <div class="row">
             <ha-switch
@@ -142,8 +143,9 @@ export class SelectListCardEditor extends LitElement implements LovelaceCardEdit
               .checked=${this._scroll_to_selected}
               .configValue=${'scroll_to_selected'}
               @change=${this._valueChanged}
-              >${localize('editor.scroll_to_selected')}</ha-switch
             >
+            </ha-switch>
+            <span class="switch-label">${localize('editor.scroll_to_selected')}</span>
           </div>
           <div class="row">
             <ha-switch
@@ -151,8 +153,9 @@ export class SelectListCardEditor extends LitElement implements LovelaceCardEdit
               .checked=${this._show_toggle}
               .configValue=${'show_toggle'}
               @change=${this._valueChanged}
-              >${localize('editor.show_toggle')}</ha-switch
             >
+            </ha-switch>
+            <span class="switch-label">${localize('editor.show_toggle')}</span>
           </div>
         </div>
       </div>
@@ -202,6 +205,9 @@ export class SelectListCardEditor extends LitElement implements LovelaceCardEdit
       .side-by-side > * {
         flex: 1;
         padding-right: 4px;
+      }
+      .switch-label {
+        margin-left: 10px;
       }
     `;
   }
