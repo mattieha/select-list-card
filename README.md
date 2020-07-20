@@ -44,7 +44,13 @@ Select List Card supports Lovelace's Visual Editor. Click the + button to add a 
 
 ```yaml
 type: 'custom:select-list-card'
-entity: input_select.scenes
+entity: input_select.tracks
+title: Tracks
+icon: 'mdi:playlist-music'
+max_options: 6
+scroll_to_selected: true
+show_toggle: true
+truncate: true
 ```
 
 
