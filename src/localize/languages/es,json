@@ -1,0 +1,21 @@
+{
+  "common": {
+    "version": "Versión",
+    "name": "Seleccionar tarjeta de la lista",
+    "description": "Mostrar las opciones de una entidad input_select como una tarjeta de lista en la que se puede hacer clic."
+  },
+  "error": {
+    "missing_entity": "Se requiere entidad",
+    "invalid_configuration": "configuración no válida",
+    "not_available": "La entidad no está disponible."
+  },
+  "editor": {
+    "entity": "Entidad (requerida)",
+    "title": "Título de la tarjeta (opcional)",
+    "icon": "Icono (opcional)",
+    "max_options": "Número de opciones mostradas (0 = todas)",
+    "truncate": "Truncar el nombre de la opción larga",
+    "show_toggle": "Mostrar boton deslizante en la cabecera",
+    "scroll_to_selected": "Opción seleccionada siempre a la vista"
+  }
+}
