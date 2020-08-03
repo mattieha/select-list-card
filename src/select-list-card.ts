@@ -1,3 +1,4 @@
+import { CallServiceActionConfig } from 'custom-card-helpers/dist';
 import { HassEntity } from 'home-assistant-js-websocket';
 import {
   LitElement,
@@ -77,6 +78,7 @@ export class SelectListCard extends LitElement implements LovelaceCard {
       scroll_to_selected: true,
       max_options: 5,
       multi: false,
+      toolbar: true,
       ...config,
     };
     this.open = this.open || this.config.open;
@@ -97,6 +99,7 @@ export class SelectListCard extends LitElement implements LovelaceCard {
   @property() private open = true;
   @query('#list') private listEl;
   private options: string[] = [];
+  private selected: string | string[] = [];
 
   protected shouldUpdate(changedProps: PropertyValues): boolean {
     return hasConfigOrEntityChanged(this, changedProps, false);
@@ -144,7 +147,7 @@ export class SelectListCard extends LitElement implements LovelaceCard {
                 multi
                 ?open=${this.open}
               >
-                ${this.generateOptions()}
+                ${this.renderOptions()}
               </paper-listbox>
             `
           : html`
@@ -155,9 +158,10 @@ export class SelectListCard extends LitElement implements LovelaceCard {
                 style="${style}"
                 ?open=${this.open}
               >
-                ${this.generateOptions()}
+                ${this.renderOptions()}
               </paper-listbox>
             `}
+        ${this.renderToolbar()}
       </ha-card>
     `;
   }
@@ -190,11 +194,13 @@ export class SelectListCard extends LitElement implements LovelaceCard {
 
   private async selectedOptionsChanged(ev: any): Promise<any> {
     const options = ev.detail.value.map(item => item.innerText.trim());
+    this.selected = options;
     console.log('EV', options);
   }
 
   private async selectedOptionChanged(ev: any): Promise<any> {
     const option = ev.detail.item.innerText.trim();
+    this.selected = option;
     const selected = this.stateObj.state;
     if (ev.detail && ev.detail.item) {
       this.setScrollTop(ev.detail.item.offsetTop);
@@ -212,7 +218,21 @@ export class SelectListCard extends LitElement implements LovelaceCard {
     });
   }
 
-  private generateOptions(): TemplateResult {
+  private callDebug(): void {
+    console.log('EL', this.listEl);
+    console.log('ITEMS', this.listEl.selectedItems);
+    console.log('SELECTED', this.selected);
+  }
+
+  private callService(actionConfig: CallServiceActionConfig, options: string): Promise<any> {
+    const [domain, service] = actionConfig.service.split('.', 2);
+    return this.hass.callService(domain, service, {
+      options,
+      ...actionConfig.service_data,
+    });
+  }
+
+  private renderOptions(): TemplateResult {
     return html`
       ${this.options.map(option => {
         if (this.config.truncate) {
@@ -224,6 +244,20 @@ export class SelectListCard extends LitElement implements LovelaceCard {
           <paper-item>${option}</paper-item>
         `;
       })}
+    `;
+  }
+
+  private renderToolbar(): TemplateResult {
+    if (!this.config.toolbar) {
+      return html``;
+    }
+    return html`
+      <div class="toolbar">
+        <paper-button @click=${this.callDebug}>
+          <ha-icon icon="hass:play"></ha-icon>
+          Execute
+        </paper-button>
+      </div>
     `;
   }
 
@@ -299,6 +333,50 @@ export class SelectListCard extends LitElement implements LovelaceCard {
         overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;
+      }
+      .toolbar {
+        background: var(--lovelace-background, var(--primary-background-color));
+        min-height: 30px;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-evenly;
+      }
+      .toolbar ha-icon-button {
+        color: var(--primary-color);
+        flex-direction: column;
+        width: 44px;
+        height: 44px;
+        --mdc-icon-button-size: 44px;
+        margin: 5px 0;
+      }
+      .toolbar ha-icon-button:first-child {
+        margin-left: 5px;
+      }
+      .toolbar ha-icon-button:last-child {
+        margin-right: 5px;
+      }
+      .toolbar paper-button {
+        color: var(--primary-color);
+        flex-direction: column;
+        margin-right: 10px;
+        padding: 15px 10px;
+        cursor: pointer;
+      }
+      .toolbar ha-icon-button:active,
+      .toolbar paper-button:active {
+        opacity: 0.4;
+        background: rgba(0, 0, 0, 0.1);
+      }
+      .toolbar paper-button {
+        color: var(--primary-color);
+        flex-direction: row;
+      }
+      .toolbar ha-icon {
+        color: var(--primary-color);
+        padding-right: 15px;
+      }
+      .fill-gap {
+        flex-grow: 1;
       }
     `;
   }

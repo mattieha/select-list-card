@@ -9,6 +9,7 @@ export interface SelectListCardConfig extends LovelaceCardConfig {
   truncate?: boolean;
   scroll_to_selected?: boolean;
   multi?: boolean;
+  toolbar?: boolean;
   max_options?: number;
   test_gui?: boolean;
   open: boolean;

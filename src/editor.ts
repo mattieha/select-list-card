@@ -135,7 +135,7 @@ export class SelectListCardEditor extends LitElement implements LovelaceCardEdit
               @change=${this._valueChanged}
             >
             </ha-switch>
-            <span class="switch-label">${localize('editor.show_toggle')}</span>
+            <span class="switch-label">${localize('editor.truncate')}</span>
           </div>
           <div class="row">
             <ha-switch
