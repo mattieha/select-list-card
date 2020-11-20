@@ -93,6 +93,7 @@ export class SelectListCard extends LitElement implements LovelaceCard {
   @property() public hass!: HomeAssistant;
   @property() private config!: SelectListCardConfig;
   @property() private open = true;
+  @property() private itemHeight = 48;
   @query('#list') private listEl;
   private options: string[] = [];
 
@@ -107,7 +108,19 @@ export class SelectListCard extends LitElement implements LovelaceCard {
     const stateObj = this.stateObj;
     const selected = stateObj.state;
     this.options = stateObj.attributes.options;
-    const style = this.config.max_options === 0 ? '' : `max-height: ${(this.config.max_options || 5) * 48 + 16}px`;
+    // const style = this.config.max_options === 0 ? '' : `max-height: ${this.maxHeight}`;
+    /*console.log(this);
+    const itemHeight = parseInt(
+      getComputedStyle(this)
+        .getPropertyValue('--select-list-item-min-height')
+        .trim()
+        .replace('px', ''),
+    );
+    console.log(itemHeight);*/
+    console.log(this);
+    setTimeout(() => {
+      this.setOverflow();
+    }, 150);
     return html`
       <ha-card aria-label=${`Select list card: ${this.config.entity}`}>
         ${this.config.title && this.config.title.length
@@ -137,7 +150,6 @@ export class SelectListCard extends LitElement implements LovelaceCard {
           id="list"
           @iron-select=${this.selectedOptionChanged}
           .selected=${this.options.indexOf(selected)}
-          style="${style}"
           ?open=${this.open}
         >
           ${this.options.map(option => {
@@ -159,19 +171,45 @@ export class SelectListCard extends LitElement implements LovelaceCard {
     return this.hass.states[this.config.entity] as HassEntity;
   }
 
+  private checkItemHeight(): void {
+    const itemHeight = parseInt(
+      getComputedStyle(this)
+        .getPropertyValue('--item-min-height')
+        .trim()
+        .replace('px', ''),
+    );
+    if (this.itemHeight !== itemHeight) {
+      this.itemHeight = itemHeight;
+    }
+  }
+
+  private get maxHeight(): string {
+    return this.config.max_options === 0 ? '' : `${(this.config.max_options || 5) * this.itemHeight + 16}px`;
+  }
+
   private toggle(): void {
     if (!this.config.show_toggle) {
       return;
     }
     this.open = !this.open;
     if (this.open) {
-      const selected = this.listEl.querySelector('.iron-selected') as HTMLElement;
-      if (selected) {
-        setTimeout(() => {
-          this.setScrollTop(selected.offsetTop);
-        }, 100);
-      }
+      this.scrollToSelected();
     }
+  }
+
+  private scrollToSelected(): void {
+    const selected = this.listEl.querySelector('.iron-selected') as HTMLElement;
+    if (selected) {
+      setTimeout(() => {
+        this.setScrollTop(selected.offsetTop);
+      }, 100);
+    }
+  }
+
+  private setOverflow(): void {
+    this.checkItemHeight();
+    this.listEl.style.maxHeight = this.maxHeight;
+    this.scrollToSelected();
   }
 
   private setScrollTop(offsetTop: number): void {
@@ -216,6 +254,9 @@ export class SelectListCard extends LitElement implements LovelaceCard {
 
   static get styles(): CSSResult {
     return css`
+      :host {
+        --item-min-height: var(--select-list-item-min-height, var(--paper-item-min-height, 48px));
+      }
       select-list-card:focus {
         outline: none;
       }
@@ -234,7 +275,7 @@ export class SelectListCard extends LitElement implements LovelaceCard {
         overflow-x: hidden;
         scrollbar-color: var(--scrollbar-thumb-color) transparent;
         scrollbar-width: thin;
-        background: var(--paper-card-background-color);
+        background: var(--card-background-color);
       }
       paper-listbox[open] {
         display: block;
@@ -250,6 +291,7 @@ export class SelectListCard extends LitElement implements LovelaceCard {
       }
       paper-item {
         cursor: pointer;
+        min-height: var(--item-min-height);
       }
       paper-item:hover::before,
       .iron-selected:before {
