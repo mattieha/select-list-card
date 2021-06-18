@@ -1,0 +1,21 @@
+{
+  "common": {
+    "version": "Wersja",
+    "name": "Karta wyboru z listy",
+    "description": "Wyświetl opcje encji input_select jako kartę listy klikalnej. "
+  },
+  "error": {
+    "missing_entity": "Encja jest wymagana",
+    "invalid_configuration": "Nieprawidłowa konfiguracja",
+    "not_available": "Encja nie jest dostępna"
+  },
+  "editor": {
+    "entity": "Encja (wymagana)",
+    "title": "Tytuł karty (opcjonalny)",
+    "icon": "Ikona (opcjonalna)",
+    "max_options": "Liczba pokazanych opcji (0 = wszystkie)",
+    "truncate": "Obetnij długą nazwę opcji",
+    "show_toggle": "Pokaż przełącznik w nagłówku",
+    "scroll_to_selected": "Wybrana opcja zawsze widoczna"
+  }
+}
