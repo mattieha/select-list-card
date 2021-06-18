@@ -83,6 +83,7 @@ This card supports translations. Please, help to add more translations and impro
 
 - English
 - Nederlands (Dutch)
+- Polish (polski)
 - [_Your language?_][add-translation]
 
 ## Support
