@@ -12,7 +12,7 @@ Some use cases:
 * Select with too many options to show in dropdown
 * Options with long titles
 * Have all options directly shown 
-* You dont't want the extra click to open the dropdown menu  
+* You don't want the extra click to open the dropdown menu  
 
 ![List animation][card-scroll-gif]
 
