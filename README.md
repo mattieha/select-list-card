@@ -4,9 +4,9 @@
 [![License][license-shield]](LICENSE.md)
 [![hacs_badge](https://img.shields.io/badge/HACS-default-orange.svg?style=for-the-badge)](https://github.com/custom-components/hacs)
 
-Display the options of an `input_select` entity as a clickable list card.   
+Display the options of an `input_select` or a `select` entity as a clickable list card.   
 In other words: the content of the dropdown menu is displayed as a card.  
-The `input_select.select_option` service is called after the user clicks (selects) an option.
+The `(input_)select.select_option` service is called after the user clicks (selects) an option.
 
 Some use cases:
 * Select with too many options to show in dropdown
@@ -27,16 +27,16 @@ Select List Card supports Lovelace's Visual Editor. Click the + button to add a 
 
 ### Options
 
-| Name               | Type    | Default      | Description                                                                 |
-| ------------------ | ------- | ------------ | --------------------------------------------------------------------------- |
-| type               | string  | **required** | `custom:select-list-card`                                                   |
-| entity             | string  | **required** | An entity_id within the `input_select` domain.                              |
-| title              | string  |  ``          | Card header title                                                           |
-| icon               | string  |  ``          | Card header icon                                                            |
-| show_toggle        | boolean | `false`      | Card header toggle                                                          |
-| truncate           | boolean | `true`       | Truncate option text to fit 1 line                                          |
-| scroll_to_selected | boolean | `true`       | Scroll the list to the position of the selected option                      |
-| max_options        | number  | `5`          | Number of options before a scrollbar appears, 0 = no scrollbar              |
+| Name               | Type    | Default      | Description                                                    |
+| ------------------ | ------- | ------------ |----------------------------------------------------------------|
+| type               | string  | **required** | `custom:select-list-card`                                      |
+| entity             | string  | **required** | An entity_id within the `input_select` or `select` domain.     |
+| title              | string  |  ``          | Card header title                                              |
+| icon               | string  |  ``          | Card header icon                                               |
+| show_toggle        | boolean | `false`      | Card header toggle                                             |
+| truncate           | boolean | `true`       | Truncate option text to fit 1 line                             |
+| scroll_to_selected | boolean | `true`       | Scroll the list to the position of the selected option         |
+| max_options        | number  | `5`          | Number of options before a scrollbar appears, 0 = no scrollbar |
 
 
 

@@ -47,7 +47,7 @@ export class SelectListCard extends LitElement implements LovelaceCard {
   }
 
   public static getStubConfig(hass, entities): object {
-    const entity = entities.find(item => item.startsWith('input_select'));
+    const entity = entities.find(item => item.startsWith('input_select') || item.startsWith('select'));
     const dummy = hass;
     return {
       entity: entity || '',
@@ -60,7 +60,7 @@ export class SelectListCard extends LitElement implements LovelaceCard {
   }
 
   public setConfig(config: SelectListCardConfig): void {
-    if (!config || !config.entity || !config.entity.startsWith('input_select')) {
+    if (!config || !config.entity || !config.entity.startsWith('input_select') || !config.entity.startsWith('select')) {
       throw new Error(localize('error.invalid_configuration'));
     }
 
@@ -194,7 +194,8 @@ export class SelectListCard extends LitElement implements LovelaceCard {
   }
 
   private static setInputSelectOption(hass: HomeAssistant, entity: string, option: string): Promise<any> {
-    return hass.callService('input_select', 'select_option', {
+    const service = entity.startsWith('input_select.') ? 'input_select' : 'select';
+    return hass.callService(service, 'select_option', {
       option,
       entity_id: entity,
     });

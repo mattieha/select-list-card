@@ -2,7 +2,7 @@
   "common": {
     "version": "Version",
     "name": "Select list card",
-    "description": "Display the options of an input_select entity as a clickable list card."
+    "description": "Display the options of an input_select or a select entity as a clickable list card."
   },
   "error": {
     "missing_entity": "Entity is required",
