@@ -2,7 +2,7 @@
   "common": {
     "version": "Versión",
     "name": "Seleccionar tarjeta de la lista",
-    "description": "Mostrar las opciones de una entidad input_select como una tarjeta de lista en la que se puede hacer clic."
+    "description": "Mostrar las opciones de una entidad input_select o un select como una tarjeta de lista en la que se puede hacer clic."
   },
   "error": {
     "missing_entity": "Se requiere entidad",

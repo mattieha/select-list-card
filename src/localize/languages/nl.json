@@ -3,7 +3,7 @@
   "common": {
     "version": "Versie",
     "name": "Select lijst kaart",
-    "description": "Toon de opties van een input_select entiteit in een kaart"
+    "description": "Toon de opties van een input_select of een select entiteit in een kaart"
   },
   "error": {
     "missing_entity": "Het specificeren van een entiteit is verplicht!",

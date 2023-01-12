@@ -2,7 +2,7 @@
   "common": {
     "version": "Verzió",
     "name": "Select list card",
-    "description": "Az input_select megjelenítése mint egy gördíthető, kattintható lista."
+    "description": "Az input_select vagy a select megjelenítése mint egy gördíthető, kattintható lista."
   },
   "error": {
     "missing_entity": "Entitás megadása kötelező",
