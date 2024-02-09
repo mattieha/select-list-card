@@ -1,0 +1,21 @@
+{
+  "common": {
+    "version": "Version",
+    "name": "Select list card",
+    "description": "Zeige die Einträge einer `input_select`-Entität als anklickbare Listenkarte."
+  },
+  "error": {
+    "missing_entity": "Entität wird benötigt",
+    "invalid_configuration": "Ungültige Konfiguration",
+    "not_available": "Entität ist nicht verfügbar"
+  },
+  "editor": {
+    "entity": "Entität (erforderlich)",
+    "title": "Kartentitel (optional)",
+    "icon": "Symbol (optional)",
+    "max_options": "Maximale Anzahl gezeigter Einträge (0 = alle)",
+    "truncate": "Lange Optionsnamen abkürzen",
+    "show_toggle": "Zeige Pfeil zum Ausklappen",
+    "scroll_to_selected": "Ausgewählte Option immer in Sicht"
+  }
+}
